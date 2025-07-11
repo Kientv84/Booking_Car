@@ -1,0 +1,28 @@
+# IDE
+.idea/
+*.iml
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Dev container (bạn đã thêm)
+.devcontainer/
+
+# Log files
+*.log
+
+# Tệp cấu hình hệ thống người dùng
+*.swp
+*.swo
+*.bak
+
+# Java build
+*.class
+*.jar
+*.war
+*.ear
+
+# Các file khác thường bị quên
+*.tmp
+*.out
