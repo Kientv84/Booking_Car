@@ -19,9 +19,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Đây là một class cấu hình JWT filter tùy chỉnh. Nhận vào request gửi đến sever
+ * Với nhiệm vụ là: Kiểm tra xem token có hợp lệ không.
+ * Nếu token hợp lệ, thì truy xuất thông tin người dùng từ token đó.
+ * Xác thực người dùng đó và lưu vào hệ thống, security context của spring (security context)
+ *
+ * Vậy tại sao cần phải kiểm tra token trước, vì ở securityFilterChain ta cấu hình STATELESS => Mỗi request độc lập cần có token kèm theo
+ * nên cần phải xác thực token đó
+ */
 @RequiredArgsConstructor
-@Component
+@Component // Đánh dấu class là một component giúp cho spring có thể quản lý như một bean và có thể inject và sử dụng.
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    // Kế thừa class OncePerRequestFilter dùng để Chạy một lần duy nhất cho mỗi request.
+    // Thường dùng để kiểm tra token hoặc log request.
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -29,10 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization"); // Khởi tạo header với key là Authorization
 
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
+            String token = header.substring(7); // cắt chuỗi từ ký tự số 7 để lấy toàn bộ token
             if(jwtTokenProvider.validateToken(token)) {
                 String username = jwtTokenProvider.getUsername(token);
                 UserDetails userDetails = userDetailService.loadUserByUsername(username);

@@ -1,21 +1,20 @@
 package com.bookingcar.kientv84.services;
 
-import com.bookingcar.kientv84.dtos.respones.AccountResponse;
-import com.bookingcar.kientv84.entities.AccountEntity;
-import com.bookingcar.kientv84.dtos.requests.AccountRequest;
+import com.example.model.Account;
+import com.example.model.AccountRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface AccountService {
 
-    ResponseEntity<List<AccountResponse>> getALlAccount();
+//    ResponseEntity<List<AccountResponse>> getALlAccount();
+//
+//    ResponseEntity<AccountResponse> getAccountById(Long id);
 
-    ResponseEntity<AccountResponse> getAccountById(Long id);
+    Account createAccount(AccountRequest account);
 
-    boolean createAccount(AccountRequest account);
-
-    ResponseEntity updateAccount(Long id, AccountRequest accountRequest);
-
-    boolean deleteAccount(List<Long> ids);
+//    ResponseEntity updateAccount(Long id, AccountRequest accountRequest);
+//
+//    boolean deleteAccount(List<Long> ids);
 }

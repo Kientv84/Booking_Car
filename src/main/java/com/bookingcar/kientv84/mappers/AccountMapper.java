@@ -1,9 +1,9 @@
 package com.bookingcar.kientv84.mappers;
 
-import com.bookingcar.kientv84.dtos.requests.AccountRequest;
-import com.bookingcar.kientv84.dtos.respones.AccountResponse;
 import com.bookingcar.kientv84.entities.AccountEntity;
 import com.bookingcar.kientv84.entities.RoleEntity;
+import com.example.model.Account;
+import com.example.model.AccountRequest;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -14,7 +14,9 @@ public interface AccountMapper {
 
     AccountEntity map(AccountRequest request);
 
-    AccountResponse mapToResponse(AccountEntity entity);
+    Account mapToAccountModel(AccountEntity accountEntity);
+
+    Account mapToResponse(AccountEntity entity);
 
     Set<RoleEntity> map(List<String> roleNames);
 

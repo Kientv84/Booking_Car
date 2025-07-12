@@ -1,17 +1,18 @@
 package com.bookingcar.kientv84.controllers;
 
-import com.bookingcar.kientv84.dtos.requests.AccountRequest;
-import com.bookingcar.kientv84.dtos.respones.AccountResponse;
-import com.bookingcar.kientv84.entities.AccountEntity;
 import com.bookingcar.kientv84.services.AccountService;
+import com.example.api.AccountApi;
+import com.example.model.Account;
+import com.example.model.AccountRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1")
-public class AccountController {
+@RequestMapping("/api")
+public class AccountController implements AccountApi {
 
     private final AccountService accountService;
 
@@ -19,30 +20,39 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-
-    @PostMapping("/register")
-    public boolean createAccount(@RequestBody AccountRequest account) {
-        return accountService.createAccount(account);
+    @Override
+    public Optional<NativeWebRequest> getRequest() {
+        return AccountApi.super.getRequest();
     }
 
-
-    @GetMapping("/accounts")
-    public ResponseEntity<List<AccountResponse>> getAllAccount(){
-        return  accountService.getALlAccount();
+    @Override
+    public ResponseEntity<Account> createAccount(AccountRequest accountRequest) {
+       return ResponseEntity.ok(accountService.createAccount(accountRequest));
     }
 
-    @GetMapping("/account/{id}")
-    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
-        return accountService.getAccountById(id);
-    }
-
-    @PostMapping("/account/update/{id}")
-    public  ResponseEntity updateAccount(@PathVariable Long id, @RequestBody AccountRequest accountRequest) {
-        return accountService.updateAccount(id, accountRequest);
-    }
-
-    @PostMapping("/accounts/delete")
-    public boolean deleteAccount(@RequestBody List<Long> ids) {
-        return accountService.deleteAccount(ids);
-    }
+//    @PostMapping("/register")
+//    public boolean createAccount( @Valid  @RequestBody AccountRequest account) {
+//        return accountService.createAccount(account);
+//    }
+//
+//
+//    @GetMapping("/accounts")
+//    public ResponseEntity<List<AccountResponse>> getAllAccount(){
+//        return  accountService.getALlAccount();
+//    }
+//
+//    @GetMapping("/account/{id}")
+//    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
+//        return accountService.getAccountById(id);
+//    }
+//
+//    @PostMapping("/account/update/{id}")
+//    public  ResponseEntity updateAccount(@PathVariable Long id, @RequestBody AccountRequest accountRequest) {
+//        return accountService.updateAccount(id, accountRequest);
+//    }
+//
+//    @PostMapping("/accounts/delete")
+//    public boolean deleteAccount(@RequestBody List<Long> ids) {
+//        return accountService.deleteAccount(ids);
+//    }
 }

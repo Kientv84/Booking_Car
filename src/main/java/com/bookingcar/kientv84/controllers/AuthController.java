@@ -3,6 +3,8 @@ package com.bookingcar.kientv84.controllers;
 import com.bookingcar.kientv84.components.JwtTokenProvider;
 import com.bookingcar.kientv84.dtos.requests.AuthRequest;
 import com.bookingcar.kientv84.dtos.respones.AuthResponse;
+import com.bookingcar.kientv84.dtos.respones.RefreshTokenResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -48,4 +50,18 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
+
+    @PostMapping("/refresh")
+    public  ResponseEntity<RefreshTokenResponse> refresh(@Valid @RequestBody RefreshTokenResponse request) {
+        String oldToken = request.getToken();
+
+        if(!jwtTokenProvider.validateToken(oldToken)){
+            return  ResponseEntity.badRequest().build();
+        }
+
+        String username = jwtTokenProvider.getUsername(oldToken);
+        List<String> roles = jwtTokenProvider.getRoles(oldToken);
+        String newToken = jwtTokenProvider.generateToken(username, roles);
+        return ResponseEntity.ok(new RefreshTokenResponse(newToken));
+    }
 }

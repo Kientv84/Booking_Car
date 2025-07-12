@@ -128,12 +128,86 @@
 			<version>3.5.3</version>
 		</dependency>
 
+		<!-- OPEN API -->
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.9</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.openapitools/jackson-databind-nullable -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.6</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>7.14.0</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/api.yml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources/openapi</output>
+							<apiPackage>com.example.api</apiPackage>
+							<modelPackage>com.example.model</modelPackage>
+							<library>spring-boot</library>
+							<configOptions>
+								<useSpringBoot3>true</useSpringBoot3>
+								<interfaceOnly>true</interfaceOnly>
+								<serializableModel>true</serializableModel>
+								<useTags>true</useTags>
+								<generateApis>true</generateApis>
+								<generateApiTests>false</generateApiTests>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!--Đảm bảo thư mục sinh code được add vào build path-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
