@@ -1,3 +1,7 @@
+# Config OPENAPI (Swagger) trong project spring boot dùng để tự động generate code từ api.yml theo chuẩn OPEN API 3.0.1
+# Tự động generate ra các vd controller, model, interface tùy vào đặt tả của file api.yml
+# Ở đây vd ta khai báo đường dẫn api "v1/register" các req,res tương ứng với các component là AccountRequest và Account
+
 openapi: 3.0.1
 info:
   title: Demo Swagger OpenAPI
@@ -5,13 +9,13 @@ info:
   description: API cho việc quản lý người dùng.
 
 servers:
-  - url: http://localhost:8081
+  - url: http://localhost:8081/api
     description: Generated server url
 
 paths:
   "/v1/register":
     post:
-      summary: Tạo người dùng mới
+      summary: Create account!
       tags:
         - Account
       operationId: createAccount
@@ -29,8 +33,106 @@ paths:
               schema:
                 $ref: '#/components/schemas/Account'
 
+  "/v1/accounts":
+    get:
+      summary: get all account!
+      tags:
+        - Account
+      operationId: getAllAccount
+      responses:
+        '200':
+          description: Get all successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+
+  "/v1/account/{id}":
+    get:
+      summary: get account by id!
+      tags:
+        - Account
+      operationId: getAccountById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the account to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: get Account by id successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found
+
+  "/v1/account/update/{id}":
+    post:
+      summary: Update account by id!
+      tags:
+        - Account
+      operationId: updateAccountById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the account to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '200':
+          description: update account successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found
+
+  "/v1/accounts/delete":
+    post:
+      tags:
+        - Account
+      operationId: deleteAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int64
+      responses:
+        '200':
+          description: Delete accounts successfully
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: Some account(s) not found
+
+
 components:
   schemas:
+    Accounts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Account'
+
     Account:
       type: object
       properties:

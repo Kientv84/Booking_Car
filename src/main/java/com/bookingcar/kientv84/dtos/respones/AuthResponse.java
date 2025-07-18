@@ -9,6 +9,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthResponse {
-    @NotBlank
-   private String token;
+  @NotBlank private String token;
 }

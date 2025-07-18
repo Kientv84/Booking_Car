@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RefreshTokenResponse {
-    private String token;
+  private String token;
 }
