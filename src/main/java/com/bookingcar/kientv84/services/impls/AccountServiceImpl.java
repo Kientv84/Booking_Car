@@ -5,14 +5,17 @@ import com.bookingcar.kientv84.exceptions.AccountServiceException;
 import com.bookingcar.kientv84.mappers.AccountMapper;
 import com.bookingcar.kientv84.repositories.AccountRepository;
 import com.bookingcar.kientv84.services.AccountService;
+import com.bookingcar.kientv84.services.RedisService;
 import com.bookingcar.kientv84.utils.message.AccountMessage;
 import com.example.model.Account;
 import com.example.model.AccountRequest;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +26,11 @@ public class AccountServiceImpl implements AccountService {
 
   private final AccountRepository accountRepository;
   private final AccountMapper accountMapper;
+  private final RedisService redisService;
 
   private final PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private AccountMessage accountMessage;
+  @Autowired private AccountMessage accountMessage;
 
   @Override
   public Account createAccount(AccountRequest accountRequest) {
@@ -37,24 +40,41 @@ public class AccountServiceImpl implements AccountService {
     var account = accountMapper.map(accountRequest);
     account.setPassword(encodePassword);
     AccountEntity accountEntity = accountRepository.save(account);
-    return accountMapper.mapToAccountModel(accountEntity);
+
+    Account accountResponse = accountMapper.mapToAccountModel(accountEntity);
+
+    log.info("Save account to cache ...");
+
+    redisService.setValue("account", accountResponse);
+    return accountResponse;
   }
 
   @Override
   public Account getAccountById(Long id) {
     log.info("Start get account by id ...");
 
-    AccountEntity account =
+    Account account = redisService.getValue("account", Account.class);
+
+    if (Objects.nonNull(account)) {
+      log.info("Return account in cache ...");
+      return account;
+    }
+
+    log.info("Get account from DB");
+    AccountEntity accountEntity =
         accountRepository
             .findById(id)
-            .orElseThrow(() -> new AccountServiceException(accountMessage.code, accountMessage.failRegister));
+            .orElseThrow(
+                () ->
+                    new AccountServiceException(accountMessage.code, accountMessage.failRegister));
 
-    if (account != null) {
-      Account response = accountMapper.mapToResponse(account);
-      return response;
-    } else {
-      throw new AccountServiceException(accountMessage.code, accountMessage.failGetById);
-    }
+    return accountMapper.mapToAccountModel(accountEntity);
+    //    if (account != null) {
+    //      Account response = accountMapper.mapToResponse(account);
+    //      return response;
+    //    } else {
+    //      throw new AccountServiceException(accountMessage.code, accountMessage.failGetById);
+    //    }
   }
 
   @Override

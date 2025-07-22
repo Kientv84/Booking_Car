@@ -50,7 +50,7 @@ public class JwtTokenProvider {
 
   /** Hàm getClaims giải mã JWT token và lấy phần payload ( username, roles, iat, exp, ..) */
   private Claims getClaims(String token) { // Nhận vào token, Claim là một tập hợp các dữ liệu
-    //(metadata, thông tin người dùng, quyền hạn, thời gian hết hạn,...) được đính kèm trong JWT.
+    // (metadata, thông tin người dùng, quyền hạn, thời gian hết hạn,...) được đính kèm trong JWT.
     return Jwts
         .parser() // .parser, parser có nghĩa là phân tích cú pháp, vậy Jwts.parser có nghĩa là bắt
         // đầu tạo parser để đọc JWT.
@@ -73,7 +73,10 @@ public class JwtTokenProvider {
   public List<String> getRoles(String token) {
     Object roles = getClaims(token).get(ROLES);
     return roles instanceof List<?>
-        ? (((List<?>) roles).stream()).map(Object::toString).toList() //<?> gọi là wildcard trong generic thể hiện bất kỳ kiểu dữ liệu nào vd (String, interger, ...)
+        ? (((List<?>) roles).stream())
+            .map(Object::toString)
+            .toList() // <?> gọi là wildcard trong generic thể hiện bất kỳ kiểu dữ liệu nào vd
+        // (String, interger, ...)
         : List.of();
     // Biểu thức điều kiện 3 ngôi (ternary operator) condition ? valueIfTrue : valueIfFalse;
   }

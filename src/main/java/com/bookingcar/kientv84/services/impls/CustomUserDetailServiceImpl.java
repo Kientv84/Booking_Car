@@ -25,10 +25,25 @@ public class CustomUserDetailServiceImpl implements UserDetailsService {
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    List<GrantedAuthority> authorityList =
-        user.getRoles().stream()
-            .map(role -> new SimpleGrantedAuthority((role.getName())))
-            .collect(Collectors.toList());
+    List<GrantedAuthority>
+        authorityList = // GrantedAuthority là một phần của spring security để biểu diễn một quyền
+            // (authority)
+            // mà người dùng đang có
+
+            // GrantedAuthority giúp spring security biết người dùng đang có những quyền gì để thực
+            // hiện các thao tác truy cập
+            user.getRoles().stream()
+                .map(
+                    role ->
+                        new SimpleGrantedAuthority(
+                            (role.getName()))) // SimpleGrantedAuthority là một implement đươn giản
+                // cho gratedAuthority
+                // trong đó mỗi quyền được biểu diễn dưới dạng một chuỗi văn bảng.
+                .collect(
+                    Collectors
+                        .toList()); // .collect() // thu thập lại tất cả các SimpleGratedAuthority
+    // Collectors.toList() là môột thành phâ cu api stream java, được dùng để biến đổi một stream
+    // thành list
 
     return new User(user.getUsername(), user.getPassword(), authorityList);
   }
