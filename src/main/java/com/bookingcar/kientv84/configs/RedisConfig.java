@@ -11,6 +11,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+  /**
+   * LettuceConnectionFactory: Quản lý kết nối tới redis. StringRedisTemplate: Dùng để dễ dàng thao
+   * tác với dữ liệu kiểu chuỗi với Redis. Các serializer giúp định dạng các dữ liệu lưu trữ:
+   * StringRedisSerializer: Chỉ dùng khóa (key) theo dạng chuỗi GenericToStringSerializer: Chuyển
+   * đổi hash thành key dạng chuỗi Jackson2JsonRedisSerializer: Chuyển đổi giá trị thành JSON để lưu
+   * trữ dễ mở rộng và linh hoạt.
+   */
   @Bean
   public StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory factory) {
     return this.cofigureStringRedisTemplate(factory);
