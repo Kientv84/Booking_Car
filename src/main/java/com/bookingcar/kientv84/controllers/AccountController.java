@@ -5,9 +5,8 @@ import com.bookingcar.kientv84.services.AccountService;
 import com.example.api.AccountApi;
 import com.example.model.Account;
 import com.example.model.AccountRequest;
-import java.util.List;
-
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ public class AccountController implements AccountApi {
 
   private final AccountService accountService;
   private final AccountProducer accountProducer;
-
 
   @Override
   public ResponseEntity<Account> createAccount(@RequestBody AccountRequest accountRequest) {
@@ -52,5 +50,4 @@ public class AccountController implements AccountApi {
   public ResponseEntity<Boolean> performAccount(@Valid @RequestBody AccountRequest accountRequest) {
     return ResponseEntity.ok(accountProducer.produceCreateAccountEvent(accountRequest));
   }
-
 }
