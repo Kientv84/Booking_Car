@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AccountService {
 
-  List<Account> getALlAccount();
+  List<Account> getAllAccount();
 
   Account getAccountById(Long id);
 

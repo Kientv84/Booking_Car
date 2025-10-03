@@ -1,7 +1,9 @@
 package com.bookingcar.kientv84.services.impls;
 
+import com.bookingcar.kientv84.dtos.requests.EmailRequest;
 import com.bookingcar.kientv84.entities.AccountEntity;
 import com.bookingcar.kientv84.exceptions.AccountServiceException;
+import com.bookingcar.kientv84.intergration.NotificationClient;
 import com.bookingcar.kientv84.mappers.AccountMapper;
 import com.bookingcar.kientv84.repositories.AccountRepository;
 import com.bookingcar.kientv84.services.AccountService;
@@ -32,6 +34,7 @@ public class AccountServiceImpl implements AccountService {
 
   private final PasswordEncoder passwordEncoder;
   private final ObjectMapper objectMapper;
+  private final NotificationClient notificationClient;
 
   @Autowired private AccountMessage accountMessage;
 
@@ -43,6 +46,19 @@ public class AccountServiceImpl implements AccountService {
     var account = accountMapper.map(accountRequest);
     account.setPassword(encodePassword);
     AccountEntity accountEntity = accountRepository.save(account);
+    var email = account.getEmail();
+    log.info("Send Email to {}", email);
+
+    try {
+      notificationClient.sendEmail(
+          EmailRequest.builder()
+              .to(email)
+              .body("Welcome!")
+              .body("Thanks for registering.")
+              .build());
+    } catch (Exception e) {
+      log.warn("Send email failed {}", email);
+    }
 
     Account accountResponse = accountMapper.mapToAccountModel(accountEntity);
 
@@ -108,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  public List<Account> getALlAccount() {
+  public List<Account> getAllAccount() {
     log.info("Start get all account ...");
     // Gọi cache ra
 

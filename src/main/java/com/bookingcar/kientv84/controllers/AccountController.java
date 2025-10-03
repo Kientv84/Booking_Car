@@ -25,7 +25,7 @@ public class AccountController implements AccountApi {
 
   @Override
   public ResponseEntity<List<Account>> getAllAccount() {
-    return ResponseEntity.ok(accountService.getALlAccount());
+    return ResponseEntity.ok(accountService.getAllAccount());
   }
 
   @Override

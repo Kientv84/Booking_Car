@@ -1,9 +1,11 @@
 package com.bookingcar.kientv84.exceptions;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class AccountServiceException extends RuntimeException {
   private final String errorCode;
