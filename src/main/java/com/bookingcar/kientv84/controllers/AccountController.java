@@ -1,22 +1,25 @@
 package com.bookingcar.kientv84.controllers;
 
+import com.bookingcar.kientv84.messagsing.producer.AccountProducer;
 import com.bookingcar.kientv84.services.AccountService;
 import com.example.api.AccountApi;
 import com.example.model.Account;
 import com.example.model.AccountRequest;
 import java.util.List;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class AccountController implements AccountApi {
 
   private final AccountService accountService;
+  private final AccountProducer accountProducer;
 
-  public AccountController(AccountService accountService) {
-    this.accountService = accountService;
-  }
 
   @Override
   public ResponseEntity<Account> createAccount(@RequestBody AccountRequest accountRequest) {
@@ -43,4 +46,11 @@ public class AccountController implements AccountApi {
   public ResponseEntity<Boolean> deleteAccount(@PathVariable List<Long> ids) {
     return ResponseEntity.ok(accountService.deleteAccount(ids));
   }
+
+  // Moc api to produce message
+  @PostMapping("v2/accounts")
+  public ResponseEntity<Boolean> performAccount(@Valid @RequestBody AccountRequest accountRequest) {
+    return ResponseEntity.ok(accountProducer.produceCreateAccountEvent(accountRequest));
+  }
+
 }

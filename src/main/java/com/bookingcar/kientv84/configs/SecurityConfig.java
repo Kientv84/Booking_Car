@@ -113,6 +113,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/api/v1/refresh")
                     .permitAll()
+                    .requestMatchers("/api/v2/accounts")
+                    .permitAll()
                     .anyRequest()
                     .authenticated() // Cần phải có token
 
