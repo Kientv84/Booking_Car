@@ -17,8 +17,7 @@ public class AccountEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotBlank(message = "account.username.notBlank")
-  @Column(nullable = true)
+  @Column(unique = true)
   private String username;
 
   @NotBlank(message = "account.password.notBlank")

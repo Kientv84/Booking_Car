@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class KafkaTopicProperties {
   private String createdAccount;
   private String accountCreated;
+  private String errorAccount;
 }

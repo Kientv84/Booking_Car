@@ -3,6 +3,7 @@ package com.bookingcar.kientv84.messagsing.producer.impls;
 import com.bookingcar.kientv84.messagsing.producer.AccountProducer;
 import com.bookingcar.kientv84.properties.KafkaTopicProperties;
 import com.bookingcar.kientv84.services.KafkaService;
+import com.bookingcar.kientv84.utils.message.KafkaObject;
 import com.example.model.Account;
 import com.example.model.AccountRequest;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,14 @@ public class AccountProducerImpl implements AccountProducer {
     log.info("[produceCreateAccountEvent] producing account to topic {}", topic);
     kafkaService.send(topic, message);
     return true;
+  }
+
+  @Override
+  public void produceMessageError(KafkaObject kafkaObject) {
+
+    var topic = kafkaTopicProperties.getErrorAccount();
+    log.info("[produceMessageError] producing error to topic {}", topic);
+
+    kafkaService.send(topic, kafkaObject);
   }
 }

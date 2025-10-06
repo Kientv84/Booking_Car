@@ -5,10 +5,12 @@ import com.bookingcar.kientv84.entities.AccountEntity;
 import com.bookingcar.kientv84.exceptions.AccountServiceException;
 import com.bookingcar.kientv84.intergration.NotificationClient;
 import com.bookingcar.kientv84.mappers.AccountMapper;
+import com.bookingcar.kientv84.messagsing.producer.AccountProducer;
 import com.bookingcar.kientv84.repositories.AccountRepository;
 import com.bookingcar.kientv84.services.AccountService;
 import com.bookingcar.kientv84.services.RedisService;
 import com.bookingcar.kientv84.utils.message.AccountMessage;
+import com.bookingcar.kientv84.utils.message.KafkaObject;
 import com.example.model.Account;
 import com.example.model.AccountRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +21,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +36,29 @@ public class AccountServiceImpl implements AccountService {
   private final PasswordEncoder passwordEncoder;
   private final ObjectMapper objectMapper;
   private final NotificationClient notificationClient;
+  private final AccountProducer accountProducer;
 
-  @Autowired private AccountMessage accountMessage;
+  private final AccountMessage accountMessage;
+
+  @Override
+  public void createdAccount(AccountRequest accountRequest) {
+    log.info("[createAccount] Start create account");
+    try {
+      var passwordEncode = passwordEncoder.encode(accountRequest.getPassword());
+      var account = accountMapper.map(accountRequest);
+      account.setPassword(passwordEncode);
+
+      var accountEntity = accountRepository.save(account);
+      var accountResponse = accountMapper.mapToAccountModel(accountEntity);
+
+      accountProducer.produceAccountEventSuccess(accountResponse);
+
+    } catch (Exception e) {
+      log.error("[createAccount] Error: {}", e.getMessage(), e);
+      KafkaObject kafkaError = new KafkaObject("KFK01", e.getMessage());
+      accountProducer.produceMessageError(kafkaError);
+    }
+  }
 
   @Override
   public Account createAccount(AccountRequest accountRequest) {
@@ -64,10 +86,36 @@ public class AccountServiceImpl implements AccountService {
 
     log.info("Save account to cache ...");
 
-    redisService.setValue("account:" + accountResponse.getId(), accountResponse, 45);
-
-    //    redisService.setValue("account", accountResponse, 30);
     return accountResponse;
+
+    //    log.info("Start create account ...");
+    //
+    //    String encodePassword = passwordEncoder.encode(accountRequest.getPassword());
+    //    var account = accountMapper.map(accountRequest);
+    //    account.setPassword(encodePassword);
+    //    AccountEntity accountEntity = accountRepository.save(account);
+    //    var email = account.getEmail();
+    //    log.info("Send Email to {}", email);
+    //
+    //    try {
+    //      notificationClient.sendEmail(
+    //          EmailRequest.builder()
+    //              .to(email)
+    //              .body("Welcome!")
+    //              .body("Thanks for registering.")
+    //              .build());
+    //    } catch (Exception e) {
+    //      log.warn("Send email failed {}", email);
+    //    }
+    //
+    //    Account accountResponse = accountMapper.mapToAccountModel(accountEntity);
+    //
+    //    log.info("Save account to cache ...");
+    //
+    //    redisService.setValue("account:" + accountResponse.getId(), accountResponse, 45);
+    //
+    //    //    redisService.setValue("account", accountResponse, 30);
+    //    return accountResponse;
   }
 
   //  @Cacheable(value = "accounts", key = "#id")

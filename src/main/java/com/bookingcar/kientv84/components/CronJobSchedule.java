@@ -1,9 +1,6 @@
 package com.bookingcar.kientv84.components;
 
-import java.time.OffsetDateTime;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,20 +21,21 @@ public class CronJobSchedule {
   //  }
 
   // TODO: use @Async
-  @Scheduled(cron = "${scheduler.interval}", zone = "${scheduler.interval.zone}")
-  public void triggerTask() {
-    log.info("Scheduled call at : {} | {}", OffsetDateTime.now(), Thread.currentThread().getName());
-    doAsyncWork();
-  }
-
-  @Async
-  public void doAsyncWork() {
-    log.info(" Start async task - {}", Thread.currentThread().getName());
-    try {
-      Thread.sleep(7000);
-    } catch (InterruptedException exception) {
-      Thread.currentThread().interrupt();
-    }
-    log.info("End process async - {}", Thread.currentThread().getName());
-  }
+  //  @Scheduled(cron = "${scheduler.interval}", zone = "${scheduler.interval.zone}")
+  //  public void triggerTask() {
+  //    log.info("Scheduled call at : {} | {}", OffsetDateTime.now(),
+  // Thread.currentThread().getName());
+  //    doAsyncWork();
+  //  }
+  //
+  //  @Async
+  //  public void doAsyncWork() {
+  //    log.info(" Start async task - {}", Thread.currentThread().getName());
+  //    try {
+  //      Thread.sleep(7000);
+  //    } catch (InterruptedException exception) {
+  //      Thread.currentThread().interrupt();
+  //    }
+  //    log.info("End process async - {}", Thread.currentThread().getName());
+  //  }
 }

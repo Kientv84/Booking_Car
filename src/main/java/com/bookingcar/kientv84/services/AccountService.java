@@ -12,6 +12,8 @@ public interface AccountService {
 
   Account createAccount(AccountRequest account);
 
+  void createdAccount(AccountRequest account);
+
   Account updateAccount(Long id, AccountRequest accountRequest);
 
   boolean deleteAccount(List<Long> ids);
